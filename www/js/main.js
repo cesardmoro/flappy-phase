@@ -1,5 +1,21 @@
-// Initialize Phaser, and creates a 400x490px game
-var game = new Phaser.Game(400, 490, Phaser.AUTO, 'gameDiv');
+$(window).resize(function() { window.resizeGame(); } );
+function resizeGame() {
+	var height = $(window).height();
+	var width = $(window).width();
+		
+	game.width = width;
+	game.height = height;
+	game.stage.bounds.width = width;
+	game.stage.bounds.height = height;
+		
+	if (game.renderType === Phaser.WEBGL)
+	{
+		game.renderer.resize(width, height);
+	}
+}
+
+ 
+var game = new Phaser.Game( $(window).width(),$(window).height(), Phaser.AUTO, 'gameDiv');
 
 // Creates a new 'main' state that will contain the game
 var mainState = {
@@ -30,13 +46,10 @@ var mainState = {
 
 		// call 'jump' for touch events
 		this.game.input.onDown.add(this.jump, this); 
-        spaceKey.onDown.add(this.jump, this); 
-		// call 'jump' for touch events
-		this.game.input.onDown.add(this.jump, this);	
         // Create a group of 20 pipes
         this.pipes = game.add.group();
         this.pipes.enableBody = true;
-        this.pipes.createMultiple(20, 'pipe');  
+        this.pipes.createMultiple(40, 'pipe');  
 
         // Timer that calls 'addRowOfPipes' ever 1.5 seconds
         this.timer = this.game.time.events.loop(1500, this.addRowOfPipes, this);           
@@ -90,7 +103,7 @@ var mainState = {
         
         for (var i = 0; i < 8; i++)
             if (i != hole && i != hole +1) 
-                this.addOnePipe(400, i*60+10);   
+                this.addOnePipe(game.width, i*60+10);   
     
         this.score += 1;
         this.labelScore.text = this.score;  
